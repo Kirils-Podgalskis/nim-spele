@@ -1,7 +1,6 @@
 from tkinter import *
 from tkinter import ttk
 
-stones = 10
 def firstPlayerMove():
     print("Player 1, how many stones do you take?")
     while True:
@@ -45,9 +44,20 @@ def render():
 
 print("Greetings in the game of Nim!")
 print("The rules are simple:")
-print(f'There are {stones} stones in the pile.')
+print('There are N amount stones in the pile.')
 print("Players take turns removing 1, 2, or 3 stones.")
 print("The player who removes the last stone wins.")
+print("How many stones do you want to play with?")
+while True:
+    try:
+        global stones
+        stones = int(input())
+        if stones < 4:
+            print("You must play with at least 4 stone. Try again.")
+        else:
+            break
+    except ValueError:
+        print("Please enter a number.")
 render()
 
 while True:
