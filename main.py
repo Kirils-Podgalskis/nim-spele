@@ -5,8 +5,8 @@ def firstPlayerMove():
     while True:
         try:
             pile = int(input("Player 1, from what pile you want to take stones from?\n"))-1
-            if pile < 0 or pile > len(piles):
-                print("Such pile does not exists")
+            if pile < 0 or pile > len(piles) or piles[pile]<=0:
+                print("Such pile does not exists or is empty")
             else:
                 break
         except ValueError:
@@ -30,7 +30,7 @@ def secondPlayerMove():
     while True:
         try:
             pile = int(input("Player 2, from what pile you want to take stones from?\n"))-1
-            if pile < 0 or pile > len(piles):
+            if pile < 0 or pile > len(piles) or piles[pile]<=0:
                 print("Such pile does not exists")
             else:
                 break
