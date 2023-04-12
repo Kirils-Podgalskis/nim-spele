@@ -51,7 +51,7 @@ def submit():
         if first_pile < 1 or second_pile < 1 or third_pile < 1:
             raise ValueError
     except ValueError:
-        messagebox.showerror("Error", "Invalid number of stones\nPlease enter a positive number")
+        messagebox.showerror("Error", "Invalid number of stones\nPlease enter a positive integer")
         return
     piles = [first_pile,second_pile,third_pile]
     player = first_move.get()
@@ -83,16 +83,24 @@ def check_win(piles, player):
 def play_game(piles,player):  # Starting piles and who goes first
     render(piles)
     if player == "human":
+        def pile_temp(e):
+            pile_input.delete(0,"end")
+        def stones_temp(e):
+            stones_input.delete(0,"end")
+
         pile_input= Entry(window)
+        pile_input.insert(0, "Enter pile's number")
+        pile_input.bind("<FocusIn>", pile_temp)
         pile_input.grid(row=2, column=1, columnspan=2,sticky='ew')
 
         stones_input= Entry(window)
+        stones_input.insert(0, "Enter number of stones")
+        stones_input.bind("<FocusIn>", stones_temp)
         stones_input.grid(row=3, column=1, columnspan=2,sticky='ew')
 
         def take():
             pile_idx = int(pile_input.get())-1
             amount = int(stones_input.get())
-            # TODO: Check if the move is valid and show error otherwise
             if pile_idx < 0 or pile_idx > 2:
                 messagebox.showerror("Error", "Invalid pile number")
                 return
@@ -112,10 +120,12 @@ def play_game(piles,player):  # Starting piles and who goes first
         root_node = Node(piles, "Max")
         generate_children(root_node, depth=2)
         minimax(root_node, depth=2, is_max=True)
-        # print(root_node)
         previous_state = piles
         piles = root_node.move
-        messagebox.showinfo("Computer's move", f"{previous_state} -> {piles}")
+        for i in range(3):
+            if piles[i] != previous_state[i]:
+                messagebox.showinfo("Computer's move", f"Computer took {previous_state[i] - piles[i]} stones from pile No.{i+1}")
+                break
         if check_win(piles, player): return
 
         new_player = "human"
@@ -125,14 +135,14 @@ def render(piles):
     title_label= tk.Label(master=window, text="Nim Game", font=("Arial", 30),background="blue")
     title_label.grid(row=0, column=0, columnspan=3, sticky='ew')
 
-    pick_label = tk.Label(master=window,width=17, text="Pick a pile", font=("Arial", 15), background="gray")
+    pick_label = tk.Label(master=window,width=17, text="Pick a pile:", font=("Arial", 15), background="gray")
     pick_label.grid(row=2, column=0, sticky='ew')
 
-    stones_label = tk.Label(master=window,width=17, text="Pick a number of stones", font=("Arial", 15), background="gray")
+    stones_label = tk.Label(master=window,width=17, text="Pick a number of stones:", font=("Arial", 15), background="gray")
     stones_label.grid(row=3, column=0, sticky='ew')
 
     for i in range(3):
-        tk.Label(master=window, text=str(piles[i]), width=6,height=3, relief=RAISED, font=("Helvetica",36,"bold") ,background="black", foreground="white").grid(row=1, column=i,sticky='ew')
+        tk.Label(master=window, text=str(piles[i])+f"\nPile No.{i+1}", width=17,height=3, relief=RAISED, font=("Helvetica",20,"bold") ,background="black", foreground="white").grid(row=1, column=i,sticky='ew')
     window.update()
 
 window.mainloop()
