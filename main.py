@@ -2,6 +2,8 @@ from node import *
 from functions import *
 import tkinter as tk
 from tkinter import *
+import sys
+import os
 
 window = Tk()
 window.title("Nim Game")
@@ -10,6 +12,9 @@ screen_height = window.winfo_screenheight()
 window_width = screen_width*0.75
 window_height = screen_height*0.75
 window.resizable(width=False, height=False)
+def restart_program():
+    python = sys.executable
+    os.execl(python, python, * sys.argv)
 
 title_label= tk.Label(master=window, text="Nim Game", font=("Arial", 30),background="blue")
 title_label.grid(row=0, column=0, columnspan=3,sticky='ew')
@@ -71,6 +76,8 @@ def play_game(piles,player):  # Starting piles and who goes first
                     widget.destroy()
                 you_won_label = tk.Label(master=window, text="You Won!", font=("Arial", 30),background="blue")
                 you_won_label.place(relx=0.5, rely=0.5, anchor=CENTER)
+                restart_btn = tk.Button(master=window, text="Restart", background="green", command=restart_program)
+                restart_btn.place(relx=0.5, rely=0.6, anchor=CENTER)
                 return
             player = "computer"
             play_game(piles, player)
@@ -85,11 +92,13 @@ def play_game(piles,player):  # Starting piles and who goes first
 
         piles = root_node.move
         player = "human"
-        if all(p == 0 for p in piles):
+        if all(p <= 0 for p in piles):
             for widget in window.winfo_children():
                 widget.destroy()
             you_lost_label = tk.Label(master=window, text="You Lost!", font=("Arial", 30),background="blue")
             you_lost_label.place(relx=0.5, rely=0.5, anchor=CENTER)
+            restart_btn = tk.Button(master=window, text="Restart", background="green", command=restart_program)
+            restart_btn.place(relx=0.5, rely=0.7, anchor=CENTER)
             return
         play_game(piles, player)
 
