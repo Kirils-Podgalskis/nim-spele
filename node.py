@@ -22,7 +22,7 @@ class Node:
     def is_min_player(self):
         return self.player == "Min"
 
-    # Returns the nim sum of the current state
+    # Returns the nim sum of the current state, used as heuristic for the minimax algorithm
     def eval(self):
         nim_sum = self.state[0] ^ self.state[1] ^ self.state[2]
         return nim_sum
