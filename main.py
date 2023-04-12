@@ -13,6 +13,8 @@ screen_height = window.winfo_screenheight()
 window_width = screen_width*0.75
 window_height = screen_height*0.75
 window.resizable(width=False, height=False)
+
+# function that is called if user decides to restart the game
 def restart_program():
     python = sys.executable
     os.execl(python, python, * sys.argv)
@@ -26,6 +28,7 @@ rules_label.grid(row=1, column=0, rowspan=2,sticky='ew')
 question_label = tk.Label(master=window, text="Who goes first?", font=("Arial", 15), background="green")
 question_label.grid(row=1,column=1,rowspan=2,sticky='ewns')
 
+# radio buttons for choosing who goes first
 first_move = StringVar()
 Radiobutton(window, text="Human", variable=first_move, value="human").grid(row=1, column=2,sticky='ew')
 Radiobutton(window, text="Computer", variable=first_move, value="computer").grid(row=2, column=2,sticky='ew')
@@ -34,6 +37,7 @@ for i in range(3):
         question=f"How many stones in pile No.{i+1}?"
         tk.Label(master=window, text=question).grid(row=3, column=i)
 
+# pile definition input boxes
 first_input= Entry(window)
 first_input.grid(row=4, column=0,sticky='ew')
 
@@ -43,7 +47,9 @@ second_input.grid(row=4, column=1,sticky='ew')
 third_input= Entry(window)
 third_input.grid(row=4, column=2,sticky='ew')
 
+# function that starts the game and clear Menu screen
 def submit():
+    # error handling
     try:
         first_pile = int(first_input.get())
         second_pile = int(second_input.get())
@@ -53,6 +59,7 @@ def submit():
     except ValueError:
         messagebox.showerror("Error", "Invalid number of stones\nPlease enter a positive integer")
         return
+
     piles = [first_pile,second_pile,third_pile]
     player = first_move.get()
 
@@ -64,6 +71,7 @@ def submit():
 start_game_btn = tk.Button(master=window, text="Start Game", background="green", command=submit)
 start_game_btn.grid(row=5, column=1,sticky='ew', rowspan=3)
 
+# function that checks if the game is over
 def check_win(piles, player):
     if all(p == 0 for p in piles):
         for widget in window.winfo_children():
@@ -80,14 +88,17 @@ def check_win(piles, player):
         return True
     return False
 
-def play_game(piles,player):  # Starting piles and who goes first
+# core function of the game, it is called recursively and executes the game and the minimax algorithm if the player is the computer
+def play_game(piles,player):
     render(piles)
     if player == "human":
+        #function that clears the input boxes when clicked
         def pile_temp(e):
             pile_input.delete(0,"end")
         def stones_temp(e):
             stones_input.delete(0,"end")
 
+        #input boxes
         pile_input= Entry(window)
         pile_input.insert(0, "Enter pile's number")
         pile_input.bind("<FocusIn>", pile_temp)
@@ -98,15 +109,18 @@ def play_game(piles,player):  # Starting piles and who goes first
         stones_input.bind("<FocusIn>", stones_temp)
         stones_input.grid(row=3, column=1, columnspan=2,sticky='ew')
 
+        #function that allows the user to take stones
         def take():
             pile_idx = int(pile_input.get())-1
             amount = int(stones_input.get())
+            #error handling
             if pile_idx < 0 or pile_idx > 2:
                 messagebox.showerror("Error", "Invalid pile number")
                 return
             if amount < 1 or amount > piles[pile_idx]:
                 messagebox.showerror("Error", f"Invalid number of stones\nYou can only take between 1 and {piles[pile_idx]} stones")
                 return
+
             piles[pile_idx] -= amount
 
             if check_win(piles, player): return  
@@ -131,6 +145,7 @@ def play_game(piles,player):  # Starting piles and who goes first
         new_player = "human"
         play_game(piles, new_player)
 
+# function to render current state of the game
 def render(piles):
     title_label= tk.Label(master=window, text="Nim Game", font=("Arial", 30),background="blue")
     title_label.grid(row=0, column=0, columnspan=3, sticky='ew')
