@@ -132,7 +132,7 @@ def render(piles):
     stones_label.grid(row=3, column=0, sticky='ew')
 
     for i in range(3):
-        tk.Label(master=window, text=str(piles[i]), width=6,height=3, relief=RAISED, font=("Helvetica",36,"bold") ,background="black").grid(row=1, column=i,sticky='ew')
+        tk.Label(master=window, text=str(piles[i]), width=6,height=3, relief=RAISED, font=("Helvetica",36,"bold") ,background="black", foreground="white").grid(row=1, column=i,sticky='ew')
     window.update()
 
 window.mainloop()
