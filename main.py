@@ -48,7 +48,7 @@ def submit():
         first_pile = int(first_input.get())
         second_pile = int(second_input.get())
         third_pile = int(third_input.get())
-        if first_pile < 0 or second_pile < 0 or third_pile < 0:
+        if first_pile < 1 or second_pile < 1 or third_pile < 1:
             raise ValueError
     except ValueError:
         messagebox.showerror("Error", "Invalid number of stones\nPlease enter a positive number")
