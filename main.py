@@ -58,6 +58,22 @@ def submit():
 start_game_btn = tk.Button(master=window, text="Start Game", background="green", command=submit)
 start_game_btn.grid(row=5, column=1,sticky='ew', rowspan=3)
 
+def check_win(piles, player):
+    if all(p == 0 for p in piles):
+        for widget in window.winfo_children():
+            widget.destroy()
+        if player == "human":
+            you_won_label = tk.Label(master=window, text="You Won!", font=("Arial", 30),background="blue")
+            you_won_label.place(relx=0.5, rely=0.5, anchor=CENTER)
+        else:
+            you_lost_label = tk.Label(master=window, text="You Lost!", font=("Arial", 30),background="blue")
+            you_lost_label.place(relx=0.5, rely=0.5, anchor=CENTER)
+
+        restart_btn = tk.Button(master=window, text="Restart", background="green", command=restart_program)
+        restart_btn.place(relx=0.5, rely=0.6, anchor=CENTER)
+        return True
+    return False
+
 def play_game(piles,player):  # Starting piles and who goes first
     render(piles)
     if player == "human":
@@ -70,17 +86,16 @@ def play_game(piles,player):  # Starting piles and who goes first
         def take():
             pile_idx = int(pile_input.get())-1
             amount = int(stones_input.get())
-            piles[pile_idx] -= amount
-            if all(p == 0 for p in piles):
-                for widget in window.winfo_children():
-                    widget.destroy()
-                you_won_label = tk.Label(master=window, text="You Won!", font=("Arial", 30),background="blue")
-                you_won_label.place(relx=0.5, rely=0.5, anchor=CENTER)
-                restart_btn = tk.Button(master=window, text="Restart", background="green", command=restart_program)
-                restart_btn.place(relx=0.5, rely=0.6, anchor=CENTER)
+            if pile_idx < 0 or pile_idx > 2:
                 return
-            player = "computer"
-            play_game(piles, player)
+            if amount < 1 or amount > piles[pile_idx]:
+                return
+            piles[pile_idx] -= amount
+            
+            if check_win(piles, player): return  
+
+            new_player = "computer"
+            play_game(piles, new_player)
 
         take_btn = tk.Button(master=window, text="Take", background="green", command=take)
         take_btn.grid(row=4, column=0,columnspan=3,sticky='ew')
@@ -89,18 +104,12 @@ def play_game(piles,player):  # Starting piles and who goes first
         generate_children(root_node, depth=2)
         minimax(root_node, depth=2, is_max=True)
         print(root_node)
-
         piles = root_node.move
-        player = "human"
-        if all(p <= 0 for p in piles):
-            for widget in window.winfo_children():
-                widget.destroy()
-            you_lost_label = tk.Label(master=window, text="You Lost!", font=("Arial", 30),background="blue")
-            you_lost_label.place(relx=0.5, rely=0.5, anchor=CENTER)
-            restart_btn = tk.Button(master=window, text="Restart", background="green", command=restart_program)
-            restart_btn.place(relx=0.5, rely=0.7, anchor=CENTER)
-            return
-        play_game(piles, player)
+
+        if check_win(piles, player): return
+
+        new_player = "human"
+        play_game(piles, new_player)
 
 def render(piles):
     title_label= tk.Label(master=window, text="Nim Game", font=("Arial", 30),background="blue")
