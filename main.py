@@ -2,6 +2,7 @@ from node import *
 from functions import *
 import tkinter as tk
 from tkinter import *
+from tkinter import messagebox
 import sys
 import os
 
@@ -23,7 +24,7 @@ rules_label = tk.Label(master=window, text="Rules: \n1. There are 3 piles of sto
 rules_label.grid(row=1, column=0, rowspan=2,sticky='ew')
 
 question_label = tk.Label(master=window, text="Who goes first?", font=("Arial", 15), background="green")
-question_label.grid(row=1,column=1,rowspan=2,sticky='ew')
+question_label.grid(row=1,column=1,rowspan=2,sticky='ewns')
 
 first_move = StringVar()
 Radiobutton(window, text="Human", variable=first_move, value="human").grid(row=1, column=2,sticky='ew')
@@ -43,10 +44,15 @@ third_input= Entry(window)
 third_input.grid(row=4, column=2,sticky='ew')
 
 def submit():
-    first_pile = int(first_input.get())
-    second_pile = int(second_input.get())
-    third_pile = int(third_input.get())
-
+    try:
+        first_pile = int(first_input.get())
+        second_pile = int(second_input.get())
+        third_pile = int(third_input.get())
+        if first_pile < 0 or second_pile < 0 or third_pile < 0:
+            raise ValueError
+    except ValueError:
+        messagebox.showerror("Error", "Invalid number of stones\nPlease enter a positive number")
+        return
     piles = [first_pile,second_pile,third_pile]
     player = first_move.get()
 
@@ -70,7 +76,7 @@ def check_win(piles, player):
             you_lost_label.place(relx=0.5, rely=0.5, anchor=CENTER)
 
         restart_btn = tk.Button(master=window, text="Restart", background="green", command=restart_program)
-        restart_btn.place(relx=0.5, rely=0.6, anchor=CENTER)
+        restart_btn.place(relx=0.5, rely=0.7, anchor=CENTER)
         return True
     return False
 
@@ -86,12 +92,15 @@ def play_game(piles,player):  # Starting piles and who goes first
         def take():
             pile_idx = int(pile_input.get())-1
             amount = int(stones_input.get())
+            # TODO: Check if the move is valid and show error otherwise
             if pile_idx < 0 or pile_idx > 2:
+                messagebox.showerror("Error", "Invalid pile number")
                 return
             if amount < 1 or amount > piles[pile_idx]:
+                messagebox.showerror("Error", f"Invalid number of stones\nYou can only take between 1 and {piles[pile_idx]} stones")
                 return
             piles[pile_idx] -= amount
-            
+
             if check_win(piles, player): return  
 
             new_player = "computer"
@@ -103,9 +112,10 @@ def play_game(piles,player):  # Starting piles and who goes first
         root_node = Node(piles, "Max")
         generate_children(root_node, depth=2)
         minimax(root_node, depth=2, is_max=True)
-        print(root_node)
+        # print(root_node)
+        previous_state = piles
         piles = root_node.move
-
+        messagebox.showinfo("Computer's move", f"{previous_state} -> {piles}")
         if check_win(piles, player): return
 
         new_player = "human"
