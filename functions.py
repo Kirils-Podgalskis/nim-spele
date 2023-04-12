@@ -17,15 +17,15 @@ def generate_children(node:Node, depth:int):
         return
 
 # minimax algorithm, that returns the best move for the current state
-def minimax(node:Node, depth:int, is_max:bool):
-    if depth == 0 or node.is_leaf():
+def minimax(node:Node, is_max:bool):
+    if node.is_leaf():
         return node.eval()
 
     # max player, that tries to maximize chances of winning by choosing the move value as close to 0 as possible
     if is_max:
         best_value = -float("inf")
         for child in node.children:
-            child.minimax_value = minimax(child, depth-1, False)
+            child.minimax_value = minimax(child, False)
             # if the child is a winning state, return the value of the child and end the search
             # this is called alpha-beta pruning, although it is the only pruning in this algorithm
             if child.state == [0,0,0]:
@@ -42,7 +42,7 @@ def minimax(node:Node, depth:int, is_max:bool):
     else:
         best_value = float("inf")
         for child in node.children:
-            child.minimax_value = minimax(child, depth-1, True)
+            child.minimax_value = minimax(child, True)
             if child.minimax_value < best_value:
                 best_value = child.minimax_value
                 best_child = child

@@ -134,13 +134,14 @@ def play_game(piles,player):
     else:
         root_node = Node(piles, "Max")
         generate_children(root_node, depth=2)
-        minimax(root_node, depth=2, is_max=True)
+        minimax(root_node, is_max=True)
         previous_state = piles
         piles = root_node.move
         for i in range(3):
             if piles[i] != previous_state[i]:
                 messagebox.showinfo("Computer's move", f"Computer took {previous_state[i] - piles[i]} stones from pile No.{i+1}")
                 break
+
         if check_win(piles, player): return
 
         new_player = "human"
