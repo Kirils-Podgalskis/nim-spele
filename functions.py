@@ -23,6 +23,11 @@ def minimax(node:Node, depth:int, is_max:bool):
         best_value = -float("inf")
         for child in node.children:
             child.minimax_value = minimax(child, depth-1, False)
+            if child.state == [0,0,0]:
+                best_value = child.minimax_value
+                best_child = child
+                node.move = best_child.state
+                return best_value
             if child.minimax_value > best_value:
                 best_value = child.minimax_value
                 best_child = child
