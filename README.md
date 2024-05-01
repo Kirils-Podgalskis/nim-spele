@@ -11,3 +11,4 @@ Your opponent is a computer, and it will always play optimally. Computer chooses
 You can play the game by running `python3 main.py` in the terminal.
 
 Author: Kirils Podgaļskis, 211RDB115
+<3
